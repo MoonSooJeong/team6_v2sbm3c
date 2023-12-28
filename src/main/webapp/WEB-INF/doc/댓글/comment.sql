@@ -1,0 +1,34 @@
+/**********************************/
+/* Table Name: 댓글 */
+/**********************************/
+
+DROP TABLE USER_COMMENT CASCADE CONSTRAINTS; 
+
+CREATE TABLE USER_COMMENT(
+		COMMENTNO                     		NUMBER(10)		 NOT NULL		 PRIMARY KEY,
+		CONTENTSNO                    		NUMBER(10)		 NULL ,
+		MEMBERNO                      		NUMBER(10)		 NULL ,
+		CDATE                         		DATE		 NOT NULL,
+		CONTENT                       		VARCHAR2(1000)		 NOT NULL,
+  FOREIGN KEY (CONTENTSNO) REFERENCES CONTENTS (CONTENTSNO),
+  FOREIGN KEY (MEMBERNO) REFERENCES MEMBER (MEMBERNO)
+);
+
+COMMENT ON TABLE USER_COMMENT is '댓글';
+COMMENT ON COLUMN USER_COMMENT.COMMENTNO is '댓글 번호';
+COMMENT ON COLUMN USER_COMMENT.CONTENTSNO is '컨텐츠번호';
+COMMENT ON COLUMN USER_COMMENT.MEMBERNO is '회원 번호';
+COMMENT ON COLUMN USER_COMMENT.CDATE is '작성일';
+COMMENT ON COLUMN USER_COMMENT.CONTENT is '댓글 내용';
+
+DROP SEQUENCE COMMENT_SEQ;
+
+CREATE SEQUENCE COMMENT_SEQ
+  START WITH 1                -- 시작 번호
+  INCREMENT BY 1            -- 증가값
+  MAXVALUE 9999999999  -- 최대값: 9999999999 --> NUMBER(10) 대응
+  CACHE 2                        -- 2번은 메모리에서만 계산
+  NOCYCLE;  
+  
+COMMIT;
+  

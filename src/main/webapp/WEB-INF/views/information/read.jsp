@@ -22,7 +22,7 @@
 <head> 
 <meta charset="UTF-8"> 
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" /> 
-<title>Resort world</title>
+<title>Tokyo Travel</title>
 <link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
 <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
 
@@ -83,10 +83,14 @@
   
   <DIV class='menu_line'></DIV>
 
-  <fieldset class="fieldset_basic">
-    <ul>
-      <li class="li_none">
-        <DIV style="width: 100%; word-break: break-all;">
+<fieldset class="fieldset_basic">
+  <ul>
+    <li class="li_none">
+      <div style="word-break: break-all;">
+        <span style="font-size: 1.5em; font-weight: bold;">${title }</span><br>
+        <span style="font-size: 1em;"> ${rdate }</span><br>
+        
+        
           <c:choose>
             <c:when test="${thumb1.endsWith('jpg') || thumb1.endsWith('png') || thumb1.endsWith('gif')}">
               <%-- /static/contents/storage/ --%>
@@ -96,12 +100,11 @@
               <img src="/contents/images/none1.png" style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'> 
             </c:otherwise>
           </c:choose>
-
-          <span style="font-size: 1.5em; font-weight: bold;">${title }</span>
-          <span style="font-size: 1em;"> ${rdate }</span><br>
-          ${content }
-        </DIV>
-      </li>
+     
+        
+        ${content }
+      </div>
+    </li>
       
       <c:if test="${youtube.trim().length() > 0 }">
         <li class="li_none" style="clear: both; padding-top: 5px; padding-bottom: 5px;">

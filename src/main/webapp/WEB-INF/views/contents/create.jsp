@@ -6,10 +6,52 @@
 <head> 
 <meta charset="UTF-8"> 
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" /> 
-<title>Resort world</title>
+<title>Tokyo Travel</title>
 <link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
 <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+<script>
+  // 댓글 등록 버튼 클릭 시 실행되는 함수
+  function submitReply() {
+    var formData = {
+      // 댓글 작성 시 입력한 데이터를 이곳에 추가
+      // 예: "contentsno": $("#contentsno").val(),
+      //     "content": $("#content").val(),
+    };
 
+    $.ajax({
+      type: "POST",
+      contentType: "application/json",
+      url: "/reply/create.do",
+      data: JSON.stringify(formData),
+      dataType: 'json',
+      success: function (data) {
+        if (data.result === 'success') {
+          // 댓글 목록을 갱신
+          updateCommentList(data.replyList);
+
+          alert("댓글이 등록되었습니다.");
+        } else if (data.result === 'login_required') {
+          alert("댓글을 작성하려면 로그인이 필요합니다.");
+        } else {
+          alert("댓글 등록에 실패했습니다.");
+        }
+      },
+      error: function (e) {
+        console.log("Error:", e);
+        alert("댓글 등록에 실패했습니다.");
+      }
+    });
+  }
+
+  // 댓글 목록을 갱신하는 함수
+  function updateCommentList(replyList) {
+    var commentListDiv = $("#commentList");
+    commentListDiv.empty();
+
+    // replyList를 이용하여 댓글 목록을 갱신하는 코드 작성
+    // 예: replyList.forEach(function(reply) { /* 댓글을 표시하는 코드 */ });
+  }
+</script>
 </head>
  
 <body>
@@ -63,7 +105,7 @@
     </div>
     <div>
        <label>검색어</label>
-       <input type='text' name='word' value='일본, 여행, 도쿄, 오사카' required="required" 
+       <input type='text' name='word' value='일본, 여행, 도쿄' required="required" 
                  class="form-control" style='width: 100%;'>
     </div>   
     <div>

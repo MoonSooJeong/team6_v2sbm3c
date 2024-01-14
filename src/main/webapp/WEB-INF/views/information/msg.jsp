@@ -6,7 +6,7 @@
 <head> 
 <meta charset="UTF-8"> 
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" /> 
-<title>Resort world</title>
+<title>Tokyo Travel</title>
 <link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
 <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
 
@@ -32,7 +32,7 @@
         
         <c:when test="${code == 'create_success'}"> <%-- Java if --%>
           <li class='li_none'>
-            <span class="span_success">새로운 컨텐츠를 등록했습니다.</span>
+            <span class="span_success">새로운 추천정보를 등록했습니다.</span>
           </li> 
         </c:when>
 
@@ -45,25 +45,25 @@
                 
         <c:when test="${code == 'create_fail'}"> <%-- Java if --%>
           <LI class='li_none'>
-            <span class="span_fail">새로운 컨텐츠 등록에 실패했습니다.</span>
+            <span class="span_fail">새로운 추천정보 등록에 실패했습니다.</span>
           </LI>                                                                      
         </c:when>
         
         <c:when test="${code == 'update_fail'}"> <%-- Java if --%>
           <LI class='li_none'>
-            <span class="span_fail">컨텐츠 수정에 실패했습니다.</span>
+            <span class="span_fail">추천정보 수정에 실패했습니다.</span>
           </LI>                                                                      
         </c:when>
         
         <c:when test="${code == 'delete_success'}"> <%-- Java if --%>
           <LI class='li_none'>
-            <span class="span_success">컨텐츠 삭제에 성공했습니다.</span>
+            <span class="span_success">추천정보 삭제에 성공했습니다.</span>
           </LI>                                                                      
         </c:when>        
         
         <c:when test="${code == 'delete_fail'}"> <%-- Java if --%>
           <LI class='li_none'>
-            <span class="span_fail">컨텐츠 삭제에 실패했습니다.</span>
+            <span class="span_fail">추천정보 삭제에 실패했습니다.</span>
           </LI>                                                                      
         </c:when> 
         
@@ -84,7 +84,7 @@
             </c:when>
         </c:choose>
         
-        <button type='button' onclick="location.href='./create.do?sectno=${sectno}'" class="btn btn-secondary btn-sm">새로운 컨텐츠 등록</button>
+        <button type='button' onclick="location.href='./create.do?sectno=${sectno}'" class="btn btn-secondary btn-sm">새로운 추천정보 등록</button>
         <button type='button' onclick="location.href='./list_by_sectno.do?sectno=${sectno}'" class="btn btn-secondary btn-sm">목록</button>
         <button type='button' onclick="location.href='./list_by_sectno_grid.do?sectno=${sectno}'" class="btn btn-secondary btn-sm">갤러리 목록</button>
       </li>

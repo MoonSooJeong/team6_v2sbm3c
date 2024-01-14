@@ -32,6 +32,17 @@
        
     win.moveTo(x, y); // 화면 중앙으로 이동
   }
+  function recommend() {
+	    // 추천을 개발한 사람의 AWS IP
+	    // "http://localhost:8000/ais/recommend_form/?memberno=${sessionScope.memberno }"  
+	    var url = 'http://15.164.197.174:8000/ais/recommend_form/?memberno=${sessionScope.memberno }';
+	    var win = window.open(url, '공지 사항', 'width=1300px, height=850px');
+	       
+	    var x = (screen.width - 1300) / 2;
+	    var y = (screen.height - 850) / 2;
+	       
+	    win.moveTo(x, y); // 화면 중앙으로 이동
+	  }
  </script>
 <div class='container_main'>
   <div class='top_img'>
@@ -55,6 +66,9 @@
                   <c:when test="${sectno == 4}">
                     <a class="nav-link top_menu_link" href="/information/list_by_sectno.do?sectno=4&now_page=1">${name}</a>
                   </c:when>
+                  <c:when test="${sectno == 5}">
+                    <a class="nav-link top_menu_link" href="/information/list_by_sectno.do?sectno=5&now_page=1">${name}</a>
+                  </c:when>
                   <c:otherwise>
                     <a class="nav-link top_menu_link" href="/contents/list_by_sectno.do?sectno=${sectno}&now_page=1">${name}</a> 
                   </c:otherwise>
@@ -62,15 +76,13 @@
               </li>
             </c:forEach>
             
-            <li class="nav-item"> 
-              <a class="nav-link top_menu_link" href="/contents/list_all.do">전체 글 목록</a>
-            </li>
+
 
             <li class="nav-item dropdown"> <%-- 회원 서브 메뉴 --%>
               <a class="nav-link top_menu_link dropdown-toggle" data-bs-toggle="dropdown" href="#">회원</a>
               <div class="dropdown-menu">
                 <c:choose>
-                  <c:when test="${sessionScope.id == null }">
+                  <c:when test="${sessionScope.member_id == null }">
                     <a class="dropdown-item" href="/member/create.do">회원 가입</a>
                     <a class="dropdown-item" href="#">아이디 찾기</a>
                     <a class="dropdown-item" href="#">비밀번호 찾기</a>
@@ -108,11 +120,12 @@
 
             <li class="nav-item"> 
               <c:choose>
-                  <c:when test="${sessionScope.id == null}">
+                  <c:when test="${sessionScope.member_id == null}">
                       <a class="nav-link top_menu_link" href="/member/login.do">로그인</a>
                   </c:when>
                   <c:otherwise>
-                      <a class="nav-link top_menu_link" href='/member/logout.do'>${sessionScope.id } 로그아웃</a>
+                  
+                      <a class="nav-link top_menu_link" href='/member/logout.do'>${sessionScope.mname }님 로그아웃</a>
                   </c:otherwise>
               </c:choose>
             </li>     

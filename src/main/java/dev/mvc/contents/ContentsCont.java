@@ -2,6 +2,7 @@ package dev.mvc.contents;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import dev.mvc.reply.ReplyVO;
 import dev.mvc.admin.AdminProcInter;
+import dev.mvc.member.MemberProcInter;
 import dev.mvc.sect.SectProcInter;
+import dev.mvc.reply.ReplyProcInter;
 import dev.mvc.sect.SectVO;
 import dev.mvc.tool.Tool;
 import dev.mvc.tool.Upload;
@@ -24,12 +28,16 @@ import dev.mvc.tool.Upload;
 @Controller
 public class ContentsCont {
   @Autowired
-  @Qualifier("dev.mvc.admin.AdminProc") // @Component("dev.mvc.admin.AdminProc")
-  private AdminProcInter adminProc;
+  @Qualifier("dev.mvc.member.MemberProc") // @Component("dev.mvc.admin.AdminProc")
+  private MemberProcInter memberProc;
   
   @Autowired
   @Qualifier("dev.mvc.sect.SectProc")  // @Component("dev.mvc.sect.SectProc")
   private SectProcInter sectProc;
+  
+  @Autowired
+  @Qualifier("dev.mvc.reply.ReplyProc")  // @Component("dev.mvc.sect.SectProc")
+  private ReplyProcInter replyProc;
   
   @Autowired
   @Qualifier("dev.mvc.contents.ContentsProc") // @Component("dev.mvc.contents.ContentsProc")
@@ -81,7 +89,7 @@ public class ContentsCont {
   public ModelAndView create(HttpServletRequest request, HttpSession session, ContentsVO contentsVO) {
     ModelAndView mav = new ModelAndView();
     
-    if (adminProc.isAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMember(session)) { // 관리자로 로그인한경우
       // ------------------------------------------------------------------------------
       // 파일 전송 코드 시작
       // ------------------------------------------------------------------------------
@@ -123,8 +131,8 @@ public class ContentsCont {
         // ------------------------------------------------------------------------------
         
         // Call By Reference: 메모리 공유, Hashcode 전달
-        int adminno = (int)session.getAttribute("adminno"); // adminno FK
-        contentsVO.setAdminno(adminno);
+        int memberno = (int)session.getAttribute("memberno"); // memberno FK
+        contentsVO.setMemberno(memberno);
         int cnt = this.contentsProc.create(contentsVO); 
         
         // ------------------------------------------------------------------------------
@@ -155,7 +163,7 @@ public class ContentsCont {
         mav.setViewName("redirect:/contents/msg.do"); // Post -> Get - param...        
       }
     } else {
-      mav.addObject("url", "/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.addObject("url", "/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       mav.setViewName("redirect:/contents/msg.do"); 
     }
     
@@ -172,7 +180,7 @@ public class ContentsCont {
     System.out.println("-> list_all");
     ModelAndView mav = new ModelAndView();
     
-    if (this.adminProc.isAdmin(session) == true) {
+    if (this.memberProc.isMember(session) == true) {
       mav.setViewName("/contents/list_all"); // /WEB-INF/views/contents/list_all.jsp
       
       ArrayList<ContentsVO> list = this.contentsProc.list_all();
@@ -193,7 +201,7 @@ public class ContentsCont {
       mav.addObject("list", list);
       
     } else {
-      mav.setViewName("/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.setViewName("/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       
     }
     
@@ -334,7 +342,7 @@ public class ContentsCont {
    * @return
    */
   @RequestMapping(value="/contents/read.do", method = RequestMethod.GET)
-  public ModelAndView read(int contentsno) { // int sectno = (int)request.getParameter("sectno");
+  public ModelAndView read(int contentsno) {
     ModelAndView mav = new ModelAndView();
     mav.setViewName("/contents/read"); // /WEB-INF/views/contents/read.jsp
     
@@ -357,9 +365,14 @@ public class ContentsCont {
     
     SectVO sectVO = this.sectProc.read(contentsVO.getSectno());
     mav.addObject("sectVO", sectVO);
-    
+
+    // 댓글 목록 조회
+    List<ReplyVO> replyList = this.replyProc.list(contentsno);
+    mav.addObject("replyList", replyList);
+
     return mav;
   }
+
   
   /**
    * 맵 등록/수정/삭제 폼
@@ -460,7 +473,7 @@ public class ContentsCont {
   public ModelAndView update_text(HttpSession session, int contentsno) {
     ModelAndView mav = new ModelAndView();
     
-    if (adminProc.isAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMember(session)) { // 관리자로 로그인한경우
       ContentsVO contentsVO = this.contentsProc.read(contentsno);
       mav.addObject("contentsVO", contentsVO);
       
@@ -472,7 +485,7 @@ public class ContentsCont {
       // mav.addObject("content", content);
 
     } else {
-      mav.addObject("url", "/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.addObject("url", "/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       mav.setViewName("redirect:/contents/msg.do"); 
     }
 
@@ -491,7 +504,7 @@ public class ContentsCont {
     
     // System.out.println("-> word: " + contentsVO.getWord());
     
-    if (this.adminProc.isAdmin(session)) { // 관리자 로그인 확인
+    if (this.memberProc.isMember(session)) { // 관리자 로그인 확인
       HashMap<String, Object> hashMap = new HashMap<String, Object>();
       hashMap.put("contentsno", contentsVO.getContentsno());
       hashMap.put("passwd", contentsVO.getPasswd());
@@ -511,7 +524,7 @@ public class ContentsCont {
         mav.setViewName("redirect:/contents/msg.do");  // POST -> GET -> JSP 출력
       }
     } else { // 정상적인 로그인이 아닌 경우 로그인 유도
-      mav.addObject("url", "/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.addObject("url", "/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       mav.setViewName("redirect:/contents/msg.do"); 
     }
     
@@ -533,7 +546,7 @@ public class ContentsCont {
   public ModelAndView update_file(HttpSession session, int contentsno) {
     ModelAndView mav = new ModelAndView();
     
-    if (adminProc.isAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMember(session)) { // 관리자로 로그인한경우
       ContentsVO contentsVO = this.contentsProc.read(contentsno);
       mav.addObject("contentsVO", contentsVO);
       
@@ -543,7 +556,7 @@ public class ContentsCont {
       mav.setViewName("/contents/update_file"); // /WEB-INF/views/contents/update_file.jsp
       
     } else {
-      mav.addObject("url", "/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.addObject("url", "/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       mav.setViewName("redirect:/contents/msg.do"); 
     }
 
@@ -560,7 +573,7 @@ public class ContentsCont {
   public ModelAndView update_file(HttpSession session, ContentsVO contentsVO) {
     ModelAndView mav = new ModelAndView();
     
-    if (this.adminProc.isAdmin(session)) {
+    if (this.memberProc.isMember(session)) {
       // 삭제할 파일 정보를 읽어옴, 기존에 등록된 레코드 저장용
       ContentsVO contentsVO_old = contentsProc.read(contentsVO.getContentsno());
       
@@ -623,7 +636,7 @@ public class ContentsCont {
       mav.setViewName("redirect:/contents/read.do"); // request -> param으로 접근 전환
                 
     } else {
-      mav.addObject("url", "/admin/login_need"); // login_need.jsp, redirect parameter 적용
+      mav.addObject("url", "/member/login_need"); // login_need.jsp, redirect parameter 적용
       mav.setViewName("redirect:/contents/msg.do"); // GET
     }
 
@@ -643,7 +656,7 @@ public class ContentsCont {
   public ModelAndView delete(HttpSession session, int contentsno) {
     ModelAndView mav = new ModelAndView();
     
-    if (adminProc.isAdmin(session)) { // 관리자로 로그인한경우
+    if (memberProc.isMember(session)) { // 관리자로 로그인한경우
       ContentsVO contentsVO = this.contentsProc.read(contentsno);
       mav.addObject("contentsVO", contentsVO);
       
@@ -653,7 +666,7 @@ public class ContentsCont {
       mav.setViewName("/contents/delete"); // /WEB-INF/views/contents/delete.jsp
       
     } else {
-      mav.addObject("url", "/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.addObject("url", "/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       mav.setViewName("redirect:/contents/msg.do"); 
     }
 
@@ -752,14 +765,14 @@ public class ContentsCont {
   public ModelAndView list_all_gallery(HttpSession session) {
     ModelAndView mav = new ModelAndView();
     
-    if (this.adminProc.isAdmin(session) == true) {
+    if (this.memberProc.isMember(session) == true) {
       mav.setViewName("/contents/list_all_gallery"); // /WEB-INF/views/contents/list_all_gallery.jsp
       
       ArrayList<ContentsVO> list = this.contentsProc.list_all();
       mav.addObject("list", list);
       
     } else {
-      mav.setViewName("/admin/login_need"); // /WEB-INF/views/admin/login_need.jsp
+      mav.setViewName("/member/login_need"); // /WEB-INF/views/member/login_need.jsp
       
     }
     

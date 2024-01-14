@@ -439,7 +439,7 @@ public class InformationCont {
     }    
     
     HashMap<String, Object> hashMap = new HashMap<String, Object>();
-    hashMap.put("contentsno", informationno);
+    hashMap.put("informationno", informationno);
     hashMap.put("youtube", youtube);
     
     this.informationProc.youtube(hashMap);

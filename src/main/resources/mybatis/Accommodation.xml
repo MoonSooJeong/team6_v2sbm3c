@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="dev.mvc.accommodation.AccommodationDAOInter">
+  <!-- return: 등록한 레코드 갯수를 1을 리턴, parameterType: 전달받는 데이터 -->
+  <insert id="create" parameterType="dev.mvc.accommodation.AccommodationVO">
+  INSERT INTO ACCOMMODATION
+    (ACCOMMODATIONNO, NAME, A_CONTACT, ADDRESS, DESCRIPTION, RATING)
+  VALUES
+    (ACCOMMODATION_SEQ.NEXTVAL, #{name}, #{contact}, #{address}, #{description}, #{rating})
+</insert>
+  
+  <!-- 출력 모드 적용 -->
+  <select id="list_all" resultType="dev.mvc.accommodation.AccommodationVO">
+    SELECT ACCOMMODATIONNO, NAME, A_CONTACT, ADDRESS, DESCRIPTION, RATING FROM ACCOMMODATION ORDER BY ACCOMMODATIONNO ASC
+  </select>
+
+      
+  <!-- 읽기, SQL -> SectVO return -->
+  <select id="read" resultType="dev.mvc.accommodation.AccommodationVO" parameterType="int">
+    SELECT ACCOMMODATIONNO, NAME, A_CONTACT, ADDRESS, DESCRIPTION, RATING FROM ACCOMMODATION WHERE ACCOMMODATIONNO=#{accommodationNo}
+  </select>
+
+  <!-- return: 수정한 레코드 갯수 리턴, parameterType: 수정할 레코드 정보 -->
+  <update id="update" parameterType="dev.mvc.accommodation.AccommodationVO">
+  UPDATE ACCOMMODATION SET
+    NAME = #{name},
+    A_CONTACT = #{contact},
+    ADDRESS = #{address},
+    DESCRIPTION = #{description},
+    RATING = #{rating}
+  WHERE ACCOMMODATIONNO = #{accommodationno}
+  </update>
+  
+  <!-- return: 삭제한 레코드 갯수 리턴, parameterType: 삭제할 레코드 정보 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM ACCOMMODATION WHERE ACCOMMODATIONNO = #{accommodationno}
+  </delete>
+  
+</mapper>

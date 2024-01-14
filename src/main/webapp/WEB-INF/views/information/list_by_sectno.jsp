@@ -92,7 +92,7 @@
               <span style="font-weight: bold;">${informationVO.title }</span><br>
               <c:choose>
                 <c:when test="${informationVO.content.length() > 160 }">
-                  ${informationVO.content.substring(0, 160) }...
+                  ${informationVO.content.substring(0, 80) }...
                 </c:when>
                 <c:otherwise>
                   ${informationVO.content }
@@ -101,9 +101,9 @@
               (${informationVO.rdate.substring(0, 16) })
             </td>
             <td class="td_bs">
-              <a href="/information/map.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="지도 설정"><img src="/information/images/map.png" class="icon"></a>
-              <a href="/information/youtube.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="Youtube 설정"><img src="/information/images/youtube.png" class="icon"></a>
-              <a href="/information/delete.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="삭제"><img src="/information/images/delete.png" class="icon"></a>
+              <a href="/information/map.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="지도 설정"><img src="/contents/images/map.png" class="icon"></a>
+              <a href="/information/youtube.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="Youtube 설정"><img src="/contents/images/youtube.png" class="icon"></a>
+              <a href="/information/delete.do?sectno=${sectno }&informationno=${informationno}&now_page=${param.now_page}" title="삭제"><img src="/contents/images/delete.png" class="icon"></a>
             </td>
           </tr>
         </c:forEach>

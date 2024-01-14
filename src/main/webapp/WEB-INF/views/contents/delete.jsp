@@ -15,7 +15,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, width=device-width" /> 
-<title>http://localhost:9091/</title>
+<title>Tokyo Travel</title>
 <link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
 <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
 
@@ -80,7 +80,7 @@
           <br>
           <FORM name='frm' method='post' action='./delete.do'>
               <input type='hidden' name='contentsno' value='${contentsno}'>
-              <input type='hidden' name='cateno' value='${cateno}'>
+              <input type='hidden' name='sectno' value='${sectno}'>
               <input type='hidden' name='now_page' value='${param.now_page}'>
               <br><br>
               <div style='text-align: center; margin: 10px auto;'>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "dev.mvc.reply.ReplyDAOInter">
+  <insert id="create" parameterType="dev.mvc.reply.ReplyVO">
+    INSERT INTO reply(replyno, contentsno, memberno, mname, content, rdate)
+    VALUES(reply_seq.nextval, #{contentsno}, #{memberno}, #{mname},#{content}, sysdate)
+  </insert>
+  
+  <select id="list" resultType="dev.mvc.reply.ReplyVO">
+    SELECT *
+    FROM reply
+    WHERE contentsno = #{contentsno}
+    ORDER BY replyno ASC
+  </select>
+
+  <select id="list_by_contentsno" resultType="dev.mvc.reply.ReplyVO" parameterType="int">
+    SELECT replyno, contentsno, memberno, mname, content, rdate
+    FROM reply
+    WHERE contentsno=#{contentsno}
+    ORDER BY replyno ASC
+  </select>
+
+  <select id="list_by_contentsno_join" resultType="dev.mvc.reply.ReplyMemberVO" parameterType="int">
+    SELECT m.id,
+               r.replyno, r.contentsno, r.memberno, r.content, r.rdate
+    FROM member m,  reply r
+    WHERE (m.memberno = r.memberno) AND r.contentsno=#{contentsno}
+    ORDER BY r.replyno DESC
+  </select>
+  
+  
+  <delete id="delete" parameterType="int">
+    DELETE FROM reply
+    WHERE replyno=#{replyno}
+  </delete>
+    
+</mapper> 

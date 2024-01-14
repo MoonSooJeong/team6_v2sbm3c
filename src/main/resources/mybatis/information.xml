@@ -72,6 +72,16 @@
   <select id="search_count" resultType="int" parameterType="HashMap">
     SELECT COUNT(*) as cnt
     FROM information
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우의 레코드 갯수 -->
+        WHERE sectno=#{sectno}
+      </when>
+      <otherwise> <!-- 검색하는 경우의 레코드 갯수 -->
+        WHERE sectno=#{sectno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
+      </otherwise>
+    </choose>
   </select>   
 
   <!-- 카테고리별 검색 + 페이징 목록 -->

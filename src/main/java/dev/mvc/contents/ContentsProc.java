@@ -279,6 +279,17 @@ public class ContentsProc implements ContentsProcInter {
       return cnt;
     }
   
+    @Override
+    public int increaseReplycnt(int contentsno) {
+      int count = contentsDAO.increaseReplycnt(contentsno);
+      return count;
+    }
+
+    @Override
+    public int decreaseReplycnt(int contentsno) {
+      int count = contentsDAO.decreaseReplycnt(contentsno);
+      return count;
+    }
 }
 
 

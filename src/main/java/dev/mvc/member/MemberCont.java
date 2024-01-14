@@ -267,53 +267,7 @@ public class MemberCont {
     return mav;
   }
 
-//  /**
-//   * 로그인 폼
-//   * @return
-//   */
-//  // http://localhost:9091/member/login.do 
-//  @RequestMapping(value = "/member/login.do", 
-//                             method = RequestMethod.GET)
-//  public ModelAndView login() {
-//    ModelAndView mav = new ModelAndView();
-//  
-//    mav.setViewName("/member/login_form");
-//    return mav;
-//  }
-//
-//  /**
-//   * 로그인 처리
-//   * @return
-//   */
-//  // http://localhost:9091/member/login.do 
-//  @RequestMapping(value = "/member/login.do", 
-//                             method = RequestMethod.POST)
-//  public ModelAndView login_proc(HttpSession session,
-//                                                   String id, 
-//                                                   String passwd) {
-//    ModelAndView mav = new ModelAndView();
-//    HashMap<String, Object> map = new HashMap<String, Object>();
-//    map.put("id", id);
-//    map.put("passwd", passwd);
-//    
-//    int count = this.memberProc.login(map); // id, passwd 일치 여부 확인
-//    if (count == 1) { // 로그인 성공
-//      // System.out.println(id + " 로그인 성공");
-//      MemberVO memberVO = memberProc.readById(id); // 로그인한 회원의 정보 조회
-//      session.setAttribute("memberno", memberVO.getMemberno());
-//      session.setAttribute("id", id);
-//      session.setAttribute("mname", memberVO.getMname());
-//      session.setAttribute("grade", memberVO.getGrade());
-//      
-//      mav.setViewName("redirect:/index.do"); // 시작 페이지로 이동  
-//    } else {
-//      mav.addObject("url", "/member/login_fail_msg"); // login_fail_msg.jsp, redirect parameter 적용
-//     
-//      mav.setViewName("redirect:/member/msg.do"); // 새로고침 방지
-//    }
-//        
-//    return mav;
-//  }
+
 
   /**
    * 로그아웃 처리
@@ -418,9 +372,16 @@ public class MemberCont {
       // System.out.println(id + " 로그인 성공");
       MemberVO memberVO = memberProc.readById(id);
       session.setAttribute("memberno", memberVO.getMemberno()); // 서버의 메모리에 기록
-      session.setAttribute("id", id);
+      session.setAttribute("member_id", memberVO.getId());
       session.setAttribute("mname", memberVO.getMname());
       session.setAttribute("grade", memberVO.getGrade());
+      
+   // 추가: 세션 정보 출력
+      System.out.println("Session Info:");
+      System.out.println("MemberNo from Session: " + session.getAttribute("memberno"));
+      System.out.println("MemberID from Session: " + session.getAttribute("member_id"));
+      System.out.println("MemberName from Session: " + session.getAttribute("mname"));
+      System.out.println("Grade from Session: " + session.getAttribute("grade"));
    
       // -------------------------------------------------------------------
       // id 관련 쿠기 저장

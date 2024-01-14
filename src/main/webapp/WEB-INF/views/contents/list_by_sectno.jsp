@@ -10,8 +10,7 @@
 <title>http://localhost:9093/contents/list_all.do</title>
 <link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
 <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
-
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
  
 </head>
@@ -26,8 +25,8 @@
   </div>
   
   <aside class="aside_right">
-    <%-- 관리자로 로그인해야 메뉴가 출력됨 --%>
-    <c:if test="${sessionScope.admin_id != null }">
+    <%-- 회원으로 로그인해야 메뉴가 출력됨 --%>
+    <c:if test="${sessionScope.member_id != null }">
       <a href="./create.do?sectno=${sectVO.sectno }">등록</a>
       <span class='menu_divide' >│</span>
     </c:if>
@@ -94,7 +93,7 @@
               <span style="font-weight: bold;">${contentsVO.title }</span><br>
               <c:choose>
                 <c:when test="${contentsVO.content.length() > 160 }">
-                  ${contentsVO.content.substring(0, 160) }...
+                  ${contentsVO.content.substring(0, 100) }...
                 </c:when>
                 <c:otherwise>
                   ${contentsVO.content }
@@ -105,7 +104,7 @@
             <td class="td_bs">
               <a href="/contents/map.do?sectno=${sectno }&contentsno=${contentsno}&now_page=${param.now_page}" title="지도 설정"><img src="/contents/images/map.png" class="icon"></a>
               <a href="/contents/youtube.do?sectno=${sectno }&contentsno=${contentsno}&now_page=${param.now_page}" title="Youtube 설정"><img src="/contents/images/youtube.png" class="icon"></a>
-              <a href="/contents/delete.do?sectno=${sectno }&contentsno=${contentsno}&now_page=${param.now_page}" title="삭제"><img src="/contents/images/delete.png" class="icon"></a>
+              <a href="/contents/delete.do?sectno=${sectno }&contentsno=${contentsno}&now_page=${param.now_page }" title="삭제"><img src="/contents/images/delete.png" class="icon"></a>
             </td>
           </tr>
         </c:forEach>

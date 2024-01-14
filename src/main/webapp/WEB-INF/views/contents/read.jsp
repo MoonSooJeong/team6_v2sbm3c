@@ -2,8 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<c:set var="name" value="${sectVO.name }" />
 
+
+<c:set var="name" value="${sectVO.name }" />
 <c:set var="sectno" value="${contentsVO.sectno }" />
 <c:set var="contentsno" value="${contentsVO.contentsno }" />
 <c:set var="thumb1" value="${contentsVO.thumb1 }" />
@@ -16,19 +17,129 @@
 <c:set var="file1" value="${contentsVO.file1 }" />
 <c:set var="size1_label" value="${contentsVO.size1_label }" />
 <c:set var="word" value="${contentsVO.word }" />
- 
-<!DOCTYPE html> 
-<html lang="ko"> 
-<head> 
-<meta charset="UTF-8"> 
-<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" /> 
-<title>Resort world</title>
-<link rel="shortcut icon" href="/images/shortcut.png" /> <%-- /static 기준 --%>
-<link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+<c:set var="content" value='${reply.content}'/>
+<c:set var="rdate" value='${reply.rdate}'/>
 
 
 
-</head> 
+<!-- 서버에서 로그인 여부를 JavaScript에 전달 -->
+<script>
+  var isLoggedIn = ${not empty sessionScope.memberno};
+</script>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" />
+  <title>Tokyo Travel</title>
+  <link rel="shortcut icon" href="/images/shortcut.png" /> <!-- /static 기준 -->
+  <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+  <style>
+    .commentContainer {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .commentContent {
+      margin-bottom: 10px;
+    }
+
+    .deleteCommentBtn {
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+  
+    // 댓글 등록 버튼 클릭 시 실행되는 함수
+    function submitReply() {
+    	  var formData = {
+
+    			  };
+
+      // 여기에서 로그인 여부 확인
+      if (!isLoggedIn) {
+        // 로그인이 안되어 있으면 메시지를 띄우고 함수 종료
+        alert("댓글을 작성하려면 로그인이 필요합니다.");
+        return;
+      }
+
+      $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/reply/create.do",
+        data: JSON.stringify(formData),
+        dataType: 'json',
+        success: function (data) {
+          if (data.result === 'success') {
+            // 댓글 목록을 갱신
+            updateCommentList(data.replyList);
+            alert("댓글이 등록되었습니다.");
+          } else if (data.result === 'login_required') {
+            alert("댓글을 작성하려면 로그인이 필요합니다.");
+          } else {
+            alert("댓글 등록에 실패했습니다.");
+          }
+        },
+        error: function (e) {
+          console.log("Error:", e);
+          alert("댓글 등록에 실패했습니다.");
+        }
+      });
+    }
+ // 댓글 삭제 버튼 클릭 시 실행되는 함수
+    function deleteComment(replyno) {
+        if (!confirm("댓글을 삭제하시겠습니까?")) {
+            return;
+        }
+
+        // AJAX를 사용하여 댓글 삭제 요청
+        $.ajax({
+            type: "POST",
+            url: "/reply/delete.do",
+            data: { replyno: replyno },
+            success: function (data) {
+                if (data.deleteSuccess) {
+                    // 댓글 목록을 갱신
+                    updateCommentList(data.replyList);
+                    alert("댓글이 삭제되었습니다.");
+
+                    // 페이지 전체를 새로고침
+                    location.reload(true);
+                } else {
+                    alert("댓글 삭제에 실패했습니다.");
+                    location.reload(true);
+                }
+            },
+            error: function (e) {
+                alert("댓글 삭제에 성공했습니다.");
+                location.reload(true);
+            }
+        });
+    }
+
+    // 댓글 목록을 갱신하는 함수
+    function updateCommentList(replyList) {
+        var commentListDiv = $("#commentList");
+        commentListDiv.empty();
+
+        // replyList를 이용하여 댓글 목록을 갱신하는 코드 작성
+        replyList.forEach(function (reply) {
+            var commentDiv = $("<div>");
+            commentDiv.append("<p>" + reply.content + "</p>");
+            // 추가적인 댓글 정보 표시 (작성자, 날짜 등)
+            commentListDiv.append(commentDiv);
+        });
+    }
+
+  </script>
+</head>
  
 <body>
 <c:import url="/menu/top.do" />
@@ -36,24 +147,28 @@
 
   <aside class="aside_right">
     <%-- 관리자로 로그인해야 메뉴가 출력됨 --%>
-    <c:if test="${sessionScope.admin_id != null }">
+    <c:if test="${sessionScope.member_id != null }">
       <%--
       http://localhost:9091/contents/create.do?sectno=1
       http://localhost:9091/contents/create.do?sectno=2
       http://localhost:9091/contents/create.do?sectno=3
       --%>
-      <a href="./create.do?sectno=${sectno }">등록</a>
-      <span class='menu_divide' >│</span>
-      <a href="./update_text.do?contentsno=${contentsno}&now_page=${param.now_page}&word=${param.word }">글 수정</a>
-      <span class='menu_divide' >│</span>
-      <a href="./update_file.do?contentsno=${contentsno}&now_page=${param.now_page}">파일 수정</a>  
-      <span class='menu_divide' >│</span>
-      <a href="./map.do?sectno=${sectno }&contentsno=${contentsno}">지도</a>
-      <span class='menu_divide' >│</span>
-      <a href="./youtube.do?sectno=${sectno }&contentsno=${contentsno}">Youtube</a>
-      <span class='menu_divide' >│</span>
-      <a href="./delete.do?contentsno=${contentsno}&now_page=${param.now_page}&sectno=${sectno}">삭제</a>  
-      <span class='menu_divide' >│</span>
+<c:if test="${sessionScope.member_id != null }">
+  <!-- Menu options for logged-in users -->
+  <a href="./create.do?sectno=${sectno }">등록</a>
+  <span class='menu_divide' >│</span>
+  <a href="./update_text.do?contentsno=${contentsno}&now_page=${param.now_page}&word=${param.word }">글 수정</a>
+  <span class='menu_divide' >│</span>
+  <a href="./update_file.do?contentsno=${contentsno}&now_page=${param.now_page}">파일 수정</a>  
+  <span class='menu_divide' >│</span>
+  <a href="./map.do?sectno=${sectno }&contentsno=${contentsno}">지도</a>
+  <span class='menu_divide' >│</span>
+  <a href="./youtube.do?sectno=${sectno }&contentsno=${contentsno}">Youtube</a>
+  <span class='menu_divide' >│</span>
+  <a href="./delete.do?contentsno=${contentsno}&now_page=${param.now_page}&sectno=${sectno}">삭제</a>  
+  <span class='menu_divide' >│</span>
+</c:if>
+
     </c:if>
 
     <a href="javascript:location.reload();">새로고침</a>
@@ -99,9 +214,9 @@
             </c:otherwise>
           </c:choose>
 
-          <span style="font-size: 1.5em; font-weight: bold;">${title }</span>
-          <span style="font-size: 1em;"> ${rdate }</span><br>
-          ${content }
+          <span style="font-size: 1.5em; font-weight: bold;">${contentsVO.title }</span>
+          <span style="font-size: 1em;"> ${contentsVO.rdate }</span><br>
+          ${contentsVO.content}
         </DIV>
       </li>
       
@@ -138,6 +253,52 @@
       </li>   
     </ul>
   </fieldset>
+  
+  <h3>Comments:</h3>
+  <div>
+
+</div>
+<DIV class='title_line'></div>
+<c:choose>
+<c:when test="${sessionScope.member_id == null }">
+<div id="loginMessage" style="display: ${isLoggedIn ? 'none' : 'block'};">
+  댓글을 작성하려면 로그인이 필요합니다.
+</div>
+</c:when>
+<c:otherwise>
+<!-- 댓글 폼 -->
+<div id="commentForm">
+  <form id="frm_reply" method="post" action="<c:url value='/reply/create.do'/>">
+    <input type="hidden" name="contentsno" value="${contentsVO.contentsno}">
+    <input type="hidden" name="memberno" value="${sessionScope.memberno}">
+    <input type="hidden" name="mname" value="${sessionScope.mname}">
+    <textarea name="content" id="content" style="width: 100%; height: 60px; margin: 3px;" placeholder="댓글 작성, 로그인해야 등록 할 수 있습니다."></textarea>
+    <button type="submit" class="btn btn-primary">등록</button>
+  </form>
+</div>
+
+</c:otherwise>
+</c:choose>
+<!-- 콘텐츠 내용 표시 부분 이후에 댓글 목록을 표시할 영역을 추가 -->
+<!-- 댓글 목록을 표시할 영역 추가 -->
+<div id="commentList">
+  <c:forEach var="reply" items="${replyList}">
+    <!-- 각 댓글을 표시하는 코드 작성 -->
+    <div class="commentContainer">
+    
+      <span style="font-size: 1em;">
+        작성자: ${reply.mname} |<!-- 작성자 이름 표시 -->
+        날짜: ${reply.rdate}
+      </span>
+      </span>
+      <p class="commentContent">${reply.content}</p>
+      
+      <c:if test="${sessionScope.admin_id != null || reply.memberno eq sessionScope.memberno}">
+        <button class="deleteCommentBtn" onclick="deleteComment(${reply.replyno})">삭제</button>
+      </c:if>
+    </div>
+  </c:forEach>
+</div>
 
 </DIV>
  
@@ -145,4 +306,3 @@
 </body>
  
 </html>
-

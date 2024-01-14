@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
  
 <!DOCTYPE html> 
 <html lang="ko"> 
@@ -53,7 +55,7 @@
     
     <div>
        <label>Youtube 스크립트</label>
-       <textarea name='youtube' class="form-control" rows="12" style='width: 100%;'>${informationVO.youtube }</textarea>
+       <textarea name='youtube' class="form-control" rows="12" style='width: 100%;'>${fn:trim(informationVO.youtube)}</textarea>
     </div>
     <div class="content_body_bottom">
       <button type="submit" class="btn btn-secondary btn-sm">저장</button>

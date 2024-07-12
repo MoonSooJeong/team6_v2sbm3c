@@ -1,5 +1,5 @@
 <h2>프로젝트 최종 </h2>
-<h1>PPT:https://docs.google.com/presentation/d/1cyOsST9EddXwAcCcstn7-jv91xZb6RBo/edit#slide=id.p9</h1>
+PPT:https://docs.google.com/presentation/d/1cyOsST9EddXwAcCcstn7-jv91xZb6RBo/edit#slide=id.p9
 
 <h2>모델링 최종 </h2>
 
